@@ -1,4 +1,6 @@
 import './App.css';
+import Button from '@mui/material/Button';
+import ButtonGroup from '@mui/material/ButtonGroup';
 
 function Header(){
   return <header>
@@ -45,7 +47,11 @@ function App() {
       <Header></Header>
       <Nav data={topics}></Nav>
       <Article title="사용자정의"></Article>
-      
+      <ButtonGroup variant="contained" aria-label="outlined primary button group">
+        <Button variant="outlined">Create</Button>
+        <Button variant="outlined">Update</Button>
+      </ButtonGroup>
+      <Button variant="outlined">Delete</Button>
     </div>
   );
 }

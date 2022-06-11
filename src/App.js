@@ -49,6 +49,8 @@ function Article(props){
 function App() {
   const [mode, setMode] = useState('WELCOME'); //새로운 상태의 기본 값이 welcome. let보다는 const
   //state값을 읽을때에는 mode, 값을 바꿀 때에는 setMode -> 69번째 줄
+  const [id, setId] = useState(null);
+  console.log(id, mode);
   const topics = [
     {id:1, title:'html', body:'html is...'},
     {id:2, title:'css', body:'css is...'},
@@ -61,7 +63,12 @@ function App() {
   if(mode === 'WELCOME'){
     content = <Article title="Welcome" body="Hello, WEB!"></Article>
   }else if(mode === 'READ'){
-    content = <Article title="READ" body="Hello, READ!"></Article>
+    const topic = topics.filter(e=>{
+      if(e.id === id) //state의 id와 topics의 id가 같으면
+        return true;
+      else return false;
+    })[0];
+    content = <Article title={topic.title} body={topic.body}></Article>
   }
   return (
     <div>
@@ -70,6 +77,7 @@ function App() {
       }}></Header>
       <Nav data={topics} onSelect={(id)=>{
         setMode('READ');
+        setId(id); //id값이 이전과 같으면 실행되지 않는다.
       }}></Nav>
       {content}
       <ButtonGroup>

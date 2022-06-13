@@ -2,14 +2,15 @@ import './App.css';
 import { useState } from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
+import styled from 'styled-components';
+
+const HeaderStyled = styled(Header)`
+  background-color:white;
+  border: 1px solid red;
+`;
 
 function Header(props){
-  const myStyle={
-    borderBottom: '1px solid gray',
-    padding:'10px',
-    fontSize:'20px'
-  };
-  return <header style={myStyle}>
+  return <header className={props.className}>
   <h1><a href="/" onClick={(evt)=>{
     evt.preventDefault();
     props.onSelect();
@@ -77,9 +78,9 @@ function App() {
   }
   return (
     <div>
-      <Header onSelect={()=>{
+      <HeaderStyled onSelect={()=>{
         setMode('WELCOME'); //state를 활용해서 setMode를 변경함. 값을 직접 변경하는게 아니라 함수를 호출하는 것.
-      }}></Header>
+      }}></HeaderStyled>
       <Nav data={topics} onSelect={(id)=>{
         setMode('READ');
         setId(id); //id값이 이전과 같으면 실행되지 않는다.

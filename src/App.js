@@ -4,7 +4,12 @@ import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 
 function Header(props){
-  return <header>
+  const myStyle={
+    borderBottom: '1px solid gray',
+    padding:'10px',
+    fontSize:'20px'
+  };
+  return <header style={myStyle}>
   <h1><a href="/" onClick={(evt)=>{
     evt.preventDefault();
     props.onSelect();

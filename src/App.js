@@ -52,19 +52,36 @@ function Article(props){
 </article>
 }
 
+function Create(props){
+  return <article>
+    <h2>Create</h2>
+    <form onSubmit={(evt)=>{
+      evt.preventDefault();
+      //evt.target은 form태그 자신
+      const title = evt.target.title.value;
+      const body = evt.target.body.value;
+      props.onCreate(title,body); //전달
+    }}>
+      <p><input name="title" type="text" placeholder='title'></input></p>
+      <p><textarea name="body" placeholder='body'></textarea></p>
+      <p><input type="submit" value="Create"></input></p>
+    </form>
+  </article>
+}
+
 function App() {
   const [mode, setMode] = useState('WELCOME'); //새로운 상태의 기본 값이 welcome. let보다는 const
   //state값을 읽을때에는 mode, 값을 바꿀 때에는 setMode -> 69번째 줄
   const [id, setId] = useState(null);
+  const [nextId, setNextId] = useState(4);
   console.log(id, mode);
-  const topics = [
+  const [topics, setTopics] = useState([
     {id:1, title:'html', body:'html is...'},
     {id:2, title:'css', body:'css is...'},
-    {id:3, title:'js', body:'js is...'}
-  ];
-  // function createHandler(){
-  //   alert('create!');
-  // }
+    {id:3, title:'js', body:'js is...'},
+  ]);
+  
+ 
   let content = null;
   if(mode === 'WELCOME'){
     content = <Article title="Welcome" body="Hello, WEB!"></Article>
@@ -75,6 +92,19 @@ function App() {
       else return false;
     })[0];
     content = <Article title={topic.title} body={topic.body}></Article>
+  }else if(mode === 'CREATE'){
+
+    content = <Create onCreate={(title,body)=>{
+      const newTopic= {id:nextId, title:title, body:body};
+      // topics.push(newTopic);
+      // setTopics(topics);
+      const newTopics = [...topics];
+      newTopics.push(newTopic);
+      setTopics(newTopics);
+      setMode('READ');
+      setId(nextId);
+      setNextId(nextId+1);
+    }}/>;
   }
   return (
     <div>
@@ -88,12 +118,20 @@ function App() {
       {content}
       <ButtonGroup>
         <Button variant="outlined" onClick={()=>{
-          alert('created!');
+          setMode('CREATE');
         }}>Create</Button>
         <Button variant="outlined">Update</Button>
       </ButtonGroup>
-      <Button variant="outlined">Delete</Button>
-    </div>
+      <Button variant="outlined" onClick={()=>{
+        const newTopics = topics.filter((e)=>{
+          if(e.id === id){
+            return false;
+          }else return true;
+        });
+        setTopics(newTopics);
+        setMode('WELCOME');
+      }}>Delete</Button>
+      </div>
   );
 }
 

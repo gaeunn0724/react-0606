@@ -3,6 +3,7 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import styled from 'styled-components';
+import { Link } from 'react-router-dom'; //component임
 
 const HeaderStyled = styled(Header)`
   background-color:white;
@@ -11,11 +12,10 @@ const HeaderStyled = styled(Header)`
 
 function Header(props){
   return <header className={props.className}>
-  <h1><a href="/" onClick={(evt)=>{
-    evt.preventDefault();
+  <h1><Link to="/" onClick={(evt)=>{
     props.onSelect();
     console.log('evt',evt);
-  }}>WWW</a></h1>
+  }}>WWW</Link></h1>
 </header>
 }
 
@@ -28,12 +28,11 @@ function Nav(props){
   // ]
   
   const tagList = props.data.map(e=>{
-    return <li key={e.id}><a href={'/read/'+e.id} onClick={(evt)=>{
-      evt.preventDefault();
+    return <li key={e.id}><Link to={'/read/'+e.id} onClick={(evt)=>{
       props.onSelect(e.id); //id값이 뜨게
     }
 
-    } >{e.title}</a></li>
+    } >{e.title}</Link></li>
   });
   return <nav>
     
@@ -122,7 +121,7 @@ function App() {
         }}>Create</Button>
         <Button variant="outlined">Update</Button>
       </ButtonGroup>
-      <Button variant="outlined" onClick={()=>{
+      <Button component={Link} to="/create" variant="outlined" onClick={()=>{
         const newTopics = topics.filter((e)=>{
           if(e.id === id){
             return false;

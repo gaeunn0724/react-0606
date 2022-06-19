@@ -1,5 +1,5 @@
 import './App.css';
-import { useState } from 'react';
+import { useState,useEffect } from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
 import { Link, Routes, Route, useParams, useNavigate } from 'react-router-dom'; //component임
@@ -48,6 +48,15 @@ function App() {
     {id:2, title:'css', body:'css is...'},
     {id:3, title:'js', body:'js is...'},
   ]);
+  useEffect(()=>{
+      console.log('side effect'); 
+      (async()=>{
+        const resp = await fetch('http://localhost:3333/topics');
+        const data = await resp.json();
+        setTopics(data);
+      })(); //만들고 바로 호출
+      
+  },[]); //최초에 한 번만 실행됨.
   const navigate = useNavigate();
   return (
     <div>

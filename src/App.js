@@ -93,7 +93,7 @@ function App() {
       },
       body: JSON.stringify({title,body}) //json으로 보내줌
     });
-    const data = resp.json(); //fetch된 결과를 받아와
+    const data = await resp.json(); //fetch된 결과를 받아와
     navigate(`/read/${data.id}`); //방금 생성한 값으로 redirection
     refreshTopics();
       // const newTopic = { id: nextId, title: title, body: body };

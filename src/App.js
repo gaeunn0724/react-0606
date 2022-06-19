@@ -2,7 +2,7 @@ import './App.css';
 import { useState } from 'react';
 import Button from '@mui/material/Button';
 import ButtonGroup from '@mui/material/ButtonGroup';
-import { Link, Routes, Route, useParams } from 'react-router-dom'; //component임
+import { Link, Routes, Route, useParams, useNavigate } from 'react-router-dom'; //component임
 import { HeaderStyled } from './HeaderStyled';
 import { Nav } from './Nav';
 import { Article } from './Article';
@@ -21,14 +21,14 @@ function Read(props){
   return <Article title={topic.title} body={topic.body}></Article>
 }
 
-function Control(){
+function Control(props){
   const params = useParams();
   const id = Number(params.id);
   let contextUI = null;
   if(id){
     contextUI = <>
       <Button variant="outlined">Update</Button>
-      <Button component={Link} to="/delete" variant="outlined">Delete</Button>
+      <Button variant="outlined" onClick={()=>{props.onDelete(id);}}>Delete</Button>
     </>
   }
   return <>
@@ -48,7 +48,7 @@ function App() {
     {id:2, title:'css', body:'css is...'},
     {id:3, title:'js', body:'js is...'},
   ]);
-  
+  const navigate = useNavigate();
   return (
     <div>
       <HeaderStyled onSelect={headerHandler()}></HeaderStyled>
@@ -62,7 +62,9 @@ function App() {
      
       <Routes>
         {['/','/read/:id','/update/:topic_id'].map(path=>{ //배열 값이 하나씩 나와서 route로 return함
-          return <Route key={path} path={path} element={<Control></Control>}></Route>
+          return <Route key={path} path={path} element={<Control onDelete={(id)=>{
+            deleteHandler(id);
+          }}></Control>}></Route>
         })}
       </Routes>
       </div>
@@ -88,17 +90,16 @@ function App() {
     };
   }
 
-  function deleteHandler() {
-    return () => {
-      const newTopics = topics.filter((e) => {
-        if (e.id === id) {
+  function deleteHandler(id) {
+    
+    const newTopics = topics.filter((e) => {
+      if (e.id === id) {
           return false;
         } else
           return true;
       });
       setTopics(newTopics);
-      setMode('WELCOME');
-    };
+      navigate('/');
   }
 
   function createHandler() {

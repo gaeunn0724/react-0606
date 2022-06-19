@@ -11,13 +11,16 @@ import { Create } from './Create';
 function Read(props){
   const params = useParams();
   const id = Number(params.id); //params의 type은 string임. 
-  const topic = props.topics.filter(e=>{
-    if(e.id === id) {
-      return true;
-    } else {
-      return false;
-    }
-  })[0];
+  const [topic,setTopic]=useState({title:null, body:null});
+  useEffect(()=>{
+    //id와 일치하는거 가져옴
+    (async()=>{
+      const resp = await fetch('http://localhost:3333/topics/'+id);
+      const data = await resp.json();
+      setTopic(data);
+    })(); //만들고 바로 호출
+  },[id]); //id가 바뀔때마다 useEffect를 사용하고 싶어!!!
+ 
   return <Article title={topic.title} body={topic.body}></Article>
 }
 
@@ -48,13 +51,15 @@ function App() {
     {id:2, title:'css', body:'css is...'},
     {id:3, title:'js', body:'js is...'},
   ]);
+
+  const refreshTopics = async()=>{
+    const resp = await fetch('http://localhost:3333/topics');
+    const data = await resp.json();
+    setTopics(data);
+  };
   useEffect(()=>{
       console.log('side effect'); 
-      (async()=>{
-        const resp = await fetch('http://localhost:3333/topics');
-        const data = await resp.json();
-        setTopics(data);
-      })(); //만들고 바로 호출
+      refreshTopics(); //만들고 바로 호출
       
   },[]); //최초에 한 번만 실행됨.
   const navigate = useNavigate();
@@ -65,7 +70,7 @@ function App() {
       {/* {content} */}
       <Routes>
         <Route path="/" element={<Article title="Welcome" body="Hello, WEB!"></Article>}></Route>
-        <Route path="/create" element={<Create onCreate={onCreateHandler()}/>}></Route>
+        <Route path="/create" element={<Create onCreate={onCreateHandler}/>}></Route>
         <Route path="/read/:id" element={<Read topics={topics}/>}></Route>
       </Routes>
      
@@ -80,16 +85,24 @@ function App() {
   );
   
 
-  function onCreateHandler() {
-    return (title, body) => {
-      const newTopic = { id: nextId, title: title, body: body };
-      const newTopics = [...topics];
-      newTopics.push(newTopic);
-      setTopics(newTopics);
-      setMode('READ');
-      setId(nextId);
-      setNextId(nextId + 1);
-    };
+  async function onCreateHandler(title, body) {
+    const resp = await fetch('http://localhost:3333/topics',{
+      method: 'POST', //POST로 보내겠다
+      headers: {
+        'Content-Type': 'application/json', //json으로 해석해서 동작해라
+      },
+      body: JSON.stringify({title,body}) //json으로 보내줌
+    });
+    const data = resp.json(); //fetch된 결과를 받아와
+    navigate(`/read/${data.id}`); //방금 생성한 값으로 redirection
+    refreshTopics();
+      // const newTopic = { id: nextId, title: title, body: body };
+      // const newTopics = [...topics];
+      // newTopics.push(newTopic);
+      // setTopics(newTopics);
+      // setMode('READ');
+      // setId(nextId);
+      // setNextId(nextId + 1);
   }
 
   function navHandler() {

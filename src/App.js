@@ -9,16 +9,33 @@ import { Article } from './Article';
 import { Create } from './Create';
 
 function Read(props){
-  const params = useParams(); //가변적인 값(ex. id)를 props로 부터 가져올 수 있다.
-  const id = Number(params.id);
+  const params = useParams();
+  const id = Number(params.id); //params의 type은 string임. 
   const topic = props.topics.filter(e=>{
-    if(e.id === id) //state의 id와 topics의 id가 같으면
+    if(e.id === id) {
       return true;
-    else return false;
+    } else {
+      return false;
+    }
   })[0];
   return <Article title={topic.title} body={topic.body}></Article>
 }
 
+function Control(){
+  const params = useParams();
+  const id = Number(params.id);
+  let contextUI = null;
+  if(id){
+    contextUI = <>
+      <Button variant="outlined">Update</Button>
+      <Button component={Link} to="/delete" variant="outlined">Delete</Button>
+    </>
+  }
+  return <>
+      <Button component={Link} to="/create" variant="outlined">Create</Button>
+      {contextUI}
+  </>
+}
 
 function App() {
   const [mode, setMode] = useState('WELCOME'); //새로운 상태의 기본 값이 welcome. let보다는 const
@@ -32,14 +49,6 @@ function App() {
     {id:3, title:'js', body:'js is...'},
   ]);
   
- 
-  let content = null;
-  if(mode === 'WELCOME'){
-    content = <Article title="Welcome" body="Hello, WEB!"></Article>
-  }else if(mode === 'READ'){
-    
-  }else if(mode === 'CREATE'){
-  }
   return (
     <div>
       <HeaderStyled onSelect={headerHandler()}></HeaderStyled>
@@ -50,25 +59,15 @@ function App() {
         <Route path="/create" element={<Create onCreate={onCreateHandler()}/>}></Route>
         <Route path="/read/:id" element={<Read topics={topics}/>}></Route>
       </Routes>
-      <ButtonGroup>
-      <Button component={Link} to="/create" variant="outlined" onClick={createHandler()}>Create</Button>
-        <Button variant="outlined">Update</Button>
-      </ButtonGroup>
-      <Button component={Link} to="/delete" variant="outlined" onClick={deleteHandler()}>Delete</Button>
+     
+      <Routes>
+        {['/','/read/:id','/update/:topic_id'].map(path=>{ //배열 값이 하나씩 나와서 route로 return함
+          return <Route key={path} path={path} element={<Control></Control>}></Route>
+        })}
+      </Routes>
       </div>
   );
-  function Read(props){
-    const params = useParams();
-    const id = Number(params.id);
-    const topic = props.topics.filter(e=>{
-      if(e.id === id) {
-        return true;
-      } else {
-        return false;
-      }
-    })[0];
-    return <Article title={topic.title} body={topic.body}></Article>
-  }
+  
 
   function onCreateHandler() {
     return (title, body) => {

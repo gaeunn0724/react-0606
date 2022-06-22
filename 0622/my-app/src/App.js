@@ -1,5 +1,5 @@
 import "./index.css";
-import { useState } from "react";
+import { useReducer } from "react";
 function Left1(props) {
   return (
     <div>
@@ -15,7 +15,7 @@ function Left1(props) {
 function Left2(props) {
   return (
     <div>
-      <h1>Left1</h1>
+      <h1>Left2</h1>
       <Left3
         onUp={() => {
           props.onUp();
@@ -63,17 +63,29 @@ function Right3(props) {
   );
 }
 export default function App() {
-  const [count, setCount] = useState(0);
+  const countReducer = (state, action) => {
+    if (action.type === "UP") {
+      return { ...state, value: state.value + action.step };
+    }
+    return state;
+  };
+  const initialState = {
+    value: 0
+  };
+  const [count, dispatch] = useReducer(countReducer, initialState);
+  const up = (step) => {
+    return { type: "UP", step: step };
+  };
   return (
     <div id="app">
       <h1>Root</h1>
       <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr" }}>
         <Left1
           onUp={() => {
-            setCount((_count) => _count + 1);
+            dispatch(up(1));
           }}
         ></Left1>
-        <Right1 count={count}></Right1>
+        <Right1 count={count.value}></Right1>
       </div>
     </div>
   );
